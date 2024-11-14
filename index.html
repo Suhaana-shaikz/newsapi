@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link href="./output.css" rel="stylesheet">
+</head>
+<style>
+   input::placeholder{
+    padding-left: 20px;
+
+   }
+   .div2{
+      margin-top: 20px;
+      width: 1900px;
+      border-radius: 50%;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: space-evenly;   
+   }
+   .suhel{
+            height: 50px;
+            overflow: scroll;
+            scrollbar-width: none;
+        }
+   img{
+    height: 200px;
+    width: 300px;
+    border-radius: 7px;
+   }
+   .suhaana{
+    height: 280px;
+    width: 280px;
+
+    border: solid black 1px;
+    overflow: scroll;
+    scrollbar-width: none;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    border-radius: 7px;
+    box-shadow: 15px 15px 15px rgba(0, 0, 0, 0.3);
+    padding-left: 8px;
+    padding-right: 8px;
+   }
+   .suhaana2{
+    
+    display: flex;
+    justify-content:center;
+    color: blue;
+
+
+   }
+   h2{
+    color: white;
+    font-size: 50px;
+    font-weight: 500;
+    text-align: center;
+    font-family: Arial, Helvetica, sans-serif;
+   }
+   .hari{
+    background-color:black;
+  
+    width: 1525px;
+   }
+   .buttons{
+    display: flex;
+    justify-content: center;
+    /* display: none; */
+   }
+   #div1{
+            padding-left: 50px;
+            padding-right: 50px;
+        }
+
+
+</style>
+<body>
+    <div> 
+        <div>
+           
+            <div class="bg-black text-center">
+             
+            <select  id="select">
+                <option value=" "aria-placeholder="select your country">select your country</option>
+                <option value="us" >United states</option>
+                <option value="ar">Argentina</option>
+                <option value="at">Australia</option>
+                <option value="au">Commonwealth of Australia</option>
+                <option value="be">Celgium</option>
+                <option value="bg">Bulgaria</option>
+                <option value="br">Brazil</option>
+                <option value="ca">Canada</option>
+                <option value="ch">Switcherland</option>
+                <option value="cn">China</option>
+                <option value="co">Colombia</option>
+                <option value="cu">Cuba</option>
+                <option value="cz">Czech Republic </option>
+                <option value="de">Germany</option>
+                <option value="eg">Egypt</option>
+                <option value="fr">France</option>
+            </select>
+            <div class="hari">
+            <h2 id="h2" ></h2>
+            </div>
+       
+            </div>
+            <div id="div1" class=" flex flex-wrap"></div>
+            <div class="buttons">
+            <div id="prevbtn"><button><<</button></div>
+            <div id="nextbtn"><button>>></button></div>
+            </div>
+             
+
+
+        </div>
+
+
+
+    </div>
+    <script>
+
+    //    let input=document.querySelector('input');
+    //    let button=document.querySelector('button');
+       let select=document.getElementById('select')
+       let h2=document.getElementById('h2');
+       let div1= document. getElementById('div1');
+       let prevBtn=document.getElementById('prevbtn');
+       let nextBtn=document.getElementById('nextbtn');
+       let buttons=document.querySelector('button')
+
+       let firstPage=1;
+       let articlesPerPage=8;
+       let totalArticles=[];
+    
+     
+       let fecth;
+    //    let country=select.value;
+       
+       let news = async()=>{
+        let country=select.value;
+        let url = await fetch(`https://newsapi.org/v2/everything?q=${country}&apiKey=545d54ab28b74577bc9c16e542bb8bfe`)
+        let fecth =await url.json()
+        totalArticles=fecth.articles
+        console.log(fecth)
+        articles()
+       } 
+   
+     function  articles(test){
+        h2.innerText = `Top Headlines Of ${select.options[select.selectedIndex].text}`;
+        div1.innerHTML='';
+        start=(firstPage-1)*articlesPerPage;
+        end=(start+articlesPerPage);
+        let eightarticles=totalArticles.slice(start,end);
+
+        let div2=document.createElement('div');
+      
+        div2.classList.add('div2')
+      
+          
+        eightarticles.forEach(article=> {
+            
+              
+            div2.innerHTML+=
+           `<div class="suhaana" >
+            <div>
+            <img src="${article.urlToImage}" alt="">
+            <div class="suhel">
+                <p><b>Title:</b>${article.title}</p>         
+                <p><b>Description:</b>${article. description}</p>
+            </div>
+            <div class="suhaana2">
+            <button><a href="${article.url}">click more...</a></button>
+
+            </div>
+         
+            
+
+
+
+            </div>`
+
+
+
+
+
+ 
+            // console.log(article.urlToImage)
+            // console.log(article.author)
+            // console.log(article.publishedAt)
+            console.log(article.url)
+        
+
+        });
+    
+        div1.appendChild(div2);
+        callingbuttons();
+
+
+
+       }
+      
+
+
+        function callingbuttons(){
+            prevbtn.disabled=firstPage===1;
+            nextbtn.disabled=firstPage*articlesPerPage>=totalArticles.length;
+
+        }
+        prevbtn.addEventListener("click",()=>{
+            if (firstPage>1){
+                firstPage--;
+                articles()
+            }
+
+        })
+        nextbtn.addEventListener("click",()=>{
+            if (firstPage*articlesPerPage<totalArticles.length){
+                firstPage++;
+                articles()
+            }
+        })
+        
+        select.addEventListener( "change" , ()=>{
+           country=select.value;
+           if (country!==""){
+            firstPage=1;
+           news(country)
+           }
+        //    buttons.style.display="block"
+    
+           
+        }) 
+
+
+
+
+
+    </script>
+</body>
+</html> 
+
